@@ -1,28 +1,37 @@
+"""Gemini API üzerinden erişilebilir modelleri listeler (test aracı)."""
+
 import os
+import sys
+
 from dotenv import load_dotenv
 import google.generativeai as genai
 
-# .env dosyasından API anahtarını alıyoruz
 load_dotenv()
-api_key = os.getenv("API_KEY")
 
-if not api_key:
-    print("Hata: .env dosyasında API_KEY bulunamadı!")
-    exit()
 
-genai.configure(api_key=api_key)
+def main() -> None:
+    api_key = os.getenv("API_KEY")
+    if not api_key:
+        print("Hata: .env dosyasında API_KEY bulunamadı.")
+        sys.exit(1)
 
-print("Kullanılabilir yapay zeka modelleri taranıyor...\n")
+    genai.configure(api_key=api_key)
+    print("Kullanılabilir Gemini modelleri:\n")
 
-try:
-    modeller = []
-    for m in genai.list_models():
-        if 'generateContent' in m.supported_generation_methods:
-            print(f"  [+] Erişim İzni Var: {m.name}")
-            modeller.append(m.name)
-            
-    if not modeller:
-        print("  [-] Uyarı: API anahtarın hiçbir modele erişemiyor! (Yeni bir key alman lazım)")
-        
-except Exception as e:
-    print(f"\nBağlantı Hatası: {e}\n(Muhtemelen API key yanlış yerden alındı veya engelli.)")
+    try:
+        modeller = [
+            m.name
+            for m in genai.list_models()
+            if "generateContent" in m.supported_generation_methods
+        ]
+        for ad in modeller:
+            print(f"  [+] {ad}")
+        if not modeller:
+            print("  [-] Hiçbir modele erişim yok. API anahtarını kontrol edin.")
+    except Exception as e:
+        print(f"Bağlantı hatası: {e}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

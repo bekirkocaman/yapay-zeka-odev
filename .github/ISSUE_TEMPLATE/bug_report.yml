@@ -1,0 +1,44 @@
+name: Hata bildirimi
+description: Bir sorun mu yaşıyorsunuz?
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Ne oldu?
+      description: Beklenen ve gerçekleşen davranışı yazın.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Adımlar
+      description: Hatayı tekrarlamak için izlediğiniz adımlar.
+      placeholder: |
+        1. python main.py
+        2. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: İşletim sistemi
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+  - type: input
+    id: python-version
+    attributes:
+      label: Python sürümü
+      placeholder: "3.12"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Hata çıktısı / log
+      description: API anahtarı veya şifre paylaşmayın.

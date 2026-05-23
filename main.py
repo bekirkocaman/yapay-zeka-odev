@@ -1,9 +1,14 @@
+"""
+Google Classroom ödev otomasyonu — okuma, AI cevap, PDF ve teslim.
+"""
+
 import io, datetime, re, time, os, docx, base64
 import requests
 import anthropic
 from dotenv import load_dotenv
 
 load_dotenv()
+
 import undetected_chromedriver as uc
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
