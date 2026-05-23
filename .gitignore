@@ -1,0 +1,28 @@
+# Gizli dosyalar (asla GitHub'a yuklemeyin)
+.env
+credentials.json
+credentials.json.json
+token.json
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+
+# Chrome / otomasyon
+chrome_profile/
+chromedriver.exe
+hata_*.png
+
+# Odev ciktilari ve kayitlar
+HW_*.pdf
+teslim_edilenler.txt
+*.pdf
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
