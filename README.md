@@ -1,63 +1,63 @@
-# Yapay Zeka Ödev Sistemi
+# AI Homework System
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![GitHub](https://img.shields.io/github/stars/bekirkocaman/yapay-zeka-odev?style=social)](https://github.com/bekirkocaman/yapay-zeka-odev)
 
-Google Classroom ödevlerini okuyan, yapay zeka ile cevap üreten ve teslim sürecini otomatikleştirmeyi deneyen Python otomasyon projesi.
+A Python automation tool that reads Google Classroom assignments, generates answers using AI, and automates the submission process.
 
-> **Uyarı:** Bu araç eğitim ve kişisel otomasyon amaçlıdır. Kurumunuzun akademik dürüstlük kurallarına uygun kullanım sizin sorumluluğunuzdadır.
-
----
-
-## Özellikler
-
-| Özellik | Açıklama |
-|--------|----------|
-| Classroom API | Aktif dersleri ve ödevleri otomatik listeler |
-| İçerik okuma | Drive PDF/Word, açıklama linkleri ve YouTube materyalleri |
-| AI cevap | Anthropic Claude ile B1 seviye İngilizce cevap üretimi |
-| PDF çıktı | ReportLab ile düzenli ödev PDF’i |
-| Teslim | Önce Classroom API; gerekirse Chrome + Drive arama yedek yolu |
-| Kayıt | `teslim_edilenler.txt` ile tekrar teslimi önleme |
+> **Warning:** This tool is intended for educational and personal automation purposes. You are responsible for using it in compliance with your institution's academic integrity policies.
 
 ---
 
-## Mimari
+## Features
+
+| Feature | Description |
+|---------|-------------|
+| Classroom API | Automatically lists active courses and assignments |
+| Content Reading | Reads Drive PDFs/Word docs, description links, and YouTube materials |
+| AI Answers | Generates B1-level English answers using Anthropic Claude |
+| PDF Output | Creates formatted assignment PDFs with ReportLab |
+| Submission | Primary: Classroom API; Fallback: Chrome + Drive search |
+| Logging | `teslim_edilenler.txt` prevents duplicate submissions |
+
+---
+
+## Architecture
 
 ```mermaid
 flowchart LR
-    A[Google Classroom API] --> B[Ödev metni]
+    A[Google Classroom API] --> B[Assignment Text]
     B --> C[Claude API]
-    C --> D[PDF oluştur]
-    D --> E{API teslim?}
-    E -->|Evet| F[Tamamlandı]
-    E -->|Hayır| G[Chrome otomasyon]
+    C --> D[Generate PDF]
+    D --> E{API Submit?}
+    E -->|Yes| F[Done]
+    E -->|No| G[Chrome Automation]
     G --> F
 ```
 
 ---
 
-## Gereksinimler
+## Requirements
 
 - Python **3.10+**
-- Google hesabı (Classroom erişimi)
+- Google account (with Classroom access)
 - [Google Cloud](docs/GOOGLE_SETUP.md) OAuth `credentials.json`
-- [Anthropic API](https://console.anthropic.com/) anahtarı
-- Google Chrome + `chromedriver.exe` (yedek teslim için)
+- [Anthropic API](https://console.anthropic.com/) key
+- Google Chrome + `chromedriver.exe` (for fallback submission)
 
 ---
 
-## Kurulum
+## Setup
 
-### 1. Depoyu klonlayın
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/bekirkocaman/yapay-zeka-odev.git
 cd yapay-zeka-odev
 ```
 
-### 2. Sanal ortam
+### 2. Virtual environment
 
 ```powershell
 python -m venv venv
@@ -72,67 +72,67 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Ortam değişkenleri
+### 3. Environment variables
 
 ```powershell
 copy .env.example .env
 ```
 
-`.env` dosyasını doldurun:
+Fill in your `.env` file:
 
-| Değişken | Zorunlu | Açıklama |
-|----------|---------|----------|
-| `ANTHROPIC_API_KEY` | Evet | Claude API anahtarı |
-| `GOOGLE_EMAIL` | Evet | Chrome otomasyon girişi |
-| `GOOGLE_PASSWORD` | Evet | Chrome otomasyon girişi |
-| `API_KEY` | Hayır | `radar.py` için Gemini anahtarı |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `ANTHROPIC_API_KEY` | Yes | Claude API key |
+| `GOOGLE_EMAIL` | Yes | Google account for Chrome automation |
+| `GOOGLE_PASSWORD` | Yes | Google account for Chrome automation |
+| `API_KEY` | No | Gemini key for `radar.py` |
 
 ### 4. Google OAuth
 
-Detaylı adımlar: **[docs/GOOGLE_SETUP.md](docs/GOOGLE_SETUP.md)**
+Detailed steps: **[docs/GOOGLE_SETUP.md](docs/GOOGLE_SETUP.md)**
 
 ```powershell
 python auth.py
 ```
 
-`token.json` oluşturulur.
+This generates `token.json`.
 
 ### 5. ChromeDriver
 
-[Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/) sürümünüze uygun `chromedriver.exe` dosyasını proje köküne koyun.
+Download the `chromedriver.exe` matching your Chrome version from [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/) and place it in the project root.
 
 ---
 
-## Kullanım
+## Usage
 
 ```powershell
 python main.py
 ```
 
-`main.py` içinde `DERSLER = []` iken yalnızca **aktif** Classroom dersleri işlenir. Belirli dersler için ID listesi verebilirsiniz.
+When `DERSLER = []` in `main.py`, only **active** Classroom courses are processed. You can specify course IDs for specific courses.
 
 ```python
-DERSLER = ["822363912140"]  # örnek: tek ders
-ATLANACAK_DERS_KELIMELERI = ["grammar"]  # isimde geçen dersler atlanır
-SON_KAC_GUN = 14  # son N gün içindeki ödevler
+DERSLER = ["822363912140"]  # example: single course
+ATLANACAK_DERS_KELIMELERI = ["grammar"]  # skip courses containing these keywords
+SON_KAC_GUN = 14  # process assignments from the last N days
 ```
 
-### Yardımcı scriptler
+### Helper Scripts
 
-| Komut | Açıklama |
-|-------|----------|
-| `python auth.py` | OAuth token yenileme |
-| `python radar.py` | Gemini API model listesi (test) |
+| Command | Description |
+|---------|-------------|
+| `python auth.py` | Refresh OAuth token |
+| `python radar.py` | Gemini API model list (test) |
 
 ---
 
-## Proje yapısı
+## Project Structure
 
 ```
 yapay-zeka-odev/
-├── main.py              # Ana otomasyon
-├── auth.py              # Google OAuth girişi
-├── radar.py             # Gemini model test aracı
+├── main.py              # Main automation script
+├── auth.py              # Google OAuth login
+├── radar.py             # Gemini model test tool
 ├── requirements.txt
 ├── .env.example
 ├── docs/
@@ -142,33 +142,33 @@ yapay-zeka-odev/
     └── ISSUE_TEMPLATE/
 ```
 
-**Repoda olmaması gerekenler** (`.gitignore` ile hariç tutulur): `.env`, `credentials.json`, `token.json`, `venv/`, `chrome_profile/`, `HW_*.pdf`
+**Should not be in the repo** (excluded via `.gitignore`): `.env`, `credentials.json`, `token.json`, `venv/`, `chrome_profile/`, `HW_*.pdf`
 
 ---
 
-## Sorun giderme
+## Troubleshooting
 
-| Sorun | Çözüm |
-|-------|--------|
-| `Class not found` | Eski ödev linki; `DERSLER = []` ile güncel dersleri kullanın |
-| `404` ders hatası | Ders ID’si güncel değil; API’den otomatik listelemeyi açın |
-| `.env` eksik uyarısı | `.env.example` → `.env` kopyalayın |
-| Add/Ekle butonu yok | `hata_*.png` ekran görüntüsüne bakın; Chrome hesabı = API hesabı olmalı |
-
----
-
-## Katkı
-
-Katkılarınızı bekliyoruz. Lütfen [CONTRIBUTING.md](CONTRIBUTING.md) dosyasına bakın.
+| Issue | Solution |
+|-------|----------|
+| `Class not found` | Outdated assignment link; use `DERSLER = []` for current courses |
+| `404` course error | Course ID is outdated; enable automatic API listing |
+| `.env` missing warning | Copy `.env.example` → `.env` |
+| Add button not found | Check `hata_*.png` screenshot; Chrome account must match API account |
 
 ---
 
-## Lisans
+## Contributing
 
-Bu proje [MIT License](LICENSE) altında lisanslanmıştır.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-## İletişim
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Contact
 
 **Bekir Kocaman** — [GitHub @bekirkocaman](https://github.com/bekirkocaman)
